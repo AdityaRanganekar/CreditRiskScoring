@@ -1,8 +1,9 @@
 import sys
 import time
-from src.entity.config_entity import TrainingPipelineConfig, DataIngestionConfig, DataValidationConfig
+from src.entity.config_entity import TrainingPipelineConfig, DataIngestionConfig, DataValidationConfig, DataTransformationConfig
 from src.components.data_ingestion import DataIngestion
 from src.components.data_validation import DataValidation
+from src.components.data_transformation import DataTransformation
 from src.logging.logger import logging
 from src.exception.exception import CreditRiskException
 
@@ -35,6 +36,18 @@ if __name__ == '__main__':
         validation_end = time.time()
         logging.info(f"Data Validation completed in {validation_end - validation_start:.2f} seconds")
         print(f"Data Validation Artifact: {data_validation_artifact}")
+
+        # 3. Data Transformation
+        logging.info("Initiating Data Transformation")
+        transformation_start = time.time()
+        
+        data_transformation_config = DataTransformationConfig(training_pipeline_config)
+        data_transformation = DataTransformation(data_validation_artifact, data_transformation_config)
+        data_transformation_artifact = data_transformation.initiate_data_transformation()
+        
+        transformation_end = time.time()
+        logging.info(f"Data Transformation completed in {transformation_end - transformation_start:.2f} seconds")
+        print(f"Data Transformation Artifact: {data_transformation_artifact}")
 
         pipeline_end_time = time.time()
         total_time = pipeline_end_time - pipeline_start_time
