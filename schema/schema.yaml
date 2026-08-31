@@ -1,25 +1,51 @@
-target_column:
-  name: "target"
+columns:
+  - loan_amnt: float64
+  - term: object
+  - int_rate: float64
+  - installment: float64
+  - grade: object
+  - sub_grade: object
+  - emp_length: object
+  - home_ownership: object
+  - annual_inc: float64
+  - verification_status: object
+  - purpose: object
+  - addr_state: object
+  - dti: float64
+  - open_acc: float64
+  - pub_rec: float64
+  - revol_bal: float64
+  - revol_util: float64
+  - total_acc: float64
+  - mort_acc: float64
+  - pub_rec_bankruptcies: float64
+  - target: int64
 
 numerical_columns:
-  - "loan_amnt"
-  - "int_rate"
-  - "installment"
-  - "annual_inc"
-  - "dti"
-  - "fico_range_low"
-  - "fico_range_high"
-  - "open_acc"
-  - "pub_rec"
-  - "revol_bal"
-  - "revol_util"
-  - "total_acc"
-  - "mort_acc"
-  - "pub_rec_bankruptcies"
+  - loan_amnt
+  - int_rate
+  - installment
+  - annual_inc
+  - dti
+  - open_acc
+  - pub_rec
+  - revol_bal
+  - revol_util
+  - total_acc
+  - mort_acc
+  - pub_rec_bankruptcies
 
 categorical_columns:
-  - "term"
-  - "sub_grade"
-  - "home_ownership"
-  - "verification_status"
-  - "addr_state"
+  - term
+  - sub_grade
+  - home_ownership
+  - verification_status
+  - addr_state
+
+drop_columns:
+  - grade
+  - emp_length
+  - purpose
+
+target_column:
+  - target
