@@ -19,10 +19,7 @@ numerical_columns:
 
 categorical_columns:
   - "term"
-  - "grade"
   - "sub_grade"
-  - "emp_length"
   - "home_ownership"
   - "verification_status"
-  - "purpose"
   - "addr_state"
