@@ -1,0 +1,28 @@
+target_column:
+  name: "target"
+
+numerical_columns:
+  - "loan_amnt"
+  - "int_rate"
+  - "installment"
+  - "annual_inc"
+  - "dti"
+  - "fico_range_low"
+  - "fico_range_high"
+  - "open_acc"
+  - "pub_rec"
+  - "revol_bal"
+  - "revol_util"
+  - "total_acc"
+  - "mort_acc"
+  - "pub_rec_bankruptcies"
+
+categorical_columns:
+  - "term"
+  - "grade"
+  - "sub_grade"
+  - "emp_length"
+  - "home_ownership"
+  - "verification_status"
+  - "purpose"
+  - "addr_state"

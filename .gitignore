@@ -2,3 +2,8 @@ venv/
 raw_data/
 .vscode/
 artifacts/
+*.log
+credit_data/
+__pycache__
+.env
+*.ipynb_checkpoints/
