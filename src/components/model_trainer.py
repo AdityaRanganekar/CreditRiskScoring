@@ -1,12 +1,12 @@
 import os
 import sys
 import mlflow
+import mlflow.sklearn
+import dagshub
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
-from catboost import CatBoostClassifier
-from lightgbm import LGBMClassifier
 from sklearn.model_selection import GridSearchCV
 
 from src.exception.exception import CreditRiskException
@@ -17,6 +17,8 @@ from src.utils.main_utils import load_object, load_numpy_array_data, save_object
 from src.utils.ml_utils.classification_metric import get_classification_score
 from src.utils.ml_utils.estimator import CreditRiskModel
 
+dagshub.init(repo_owner='AdityaRanganekar', repo_name='CreditRiskScoring', mlflow=True)
+
 class ModelTrainer:
     def __init__(self, data_transformation_artifact: DataTransformationArtifact, 
                  model_trainer_config: ModelTrainerConfig):
@@ -25,6 +27,22 @@ class ModelTrainer:
             self.data_transformation_artifact = data_transformation_artifact
         except Exception as e:
             raise CreditRiskException(e, sys)
+
+    def track_mlflow(self, best_model, train_metric, test_metric):
+        with mlflow.start_run():
+
+            mlflow.log_metric("train_f1_score", train_metric.f1_score)
+            mlflow.log_metric("train_precision", train_metric.precision_score)
+            mlflow.log_metric("train_recall", train_metric.recall_score)
+
+            mlflow.log_metric("test_f1_score", test_metric.f1_score)
+            mlflow.log_metric("test_precision", test_metric.precision_score)
+            mlflow.log_metric("test_recall", test_metric.recall_score)
+
+            mlflow.sklearn.log_model(
+                sk_model=best_model, 
+                artifact_path="model"
+            )
 
     def evaluate_models(self, X_train, y_train, X_test, y_test, models, params):
         try:
@@ -106,11 +124,16 @@ class ModelTrainer:
                     f"Train-Test score difference ({metric_diff:.4f}) exceeds the threshold ({self.model_trainer_config.overfitting_underfitting_threshold})."
                 )
 
+            self.track_mlflow(best_model, classification_train_metric, classification_test_metric)
+
             preprocessor = load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
             
             os.makedirs(os.path.dirname(self.model_trainer_config.trained_model_file_path), exist_ok=True)
             credit_model_obj = CreditRiskModel(preprocessor, best_model)
             save_object(self.model_trainer_config.trained_model_file_path, obj=credit_model_obj)
+
+            os.makedirs("final_model", exist_ok=True)
+            save_object("final_model/model.pkl", obj=credit_model_obj)
 
             return ModelTrainerArtifact(
                 trained_model_file_path=self.model_trainer_config.trained_model_file_path,

@@ -12,7 +12,7 @@ from src.exception.exception import CreditRiskException
 from src.logging.logger import logging
 from src.entity.artifact_entity import DataValidationArtifact, DataTransformationArtifact
 from src.entity.config_entity import DataTransformationConfig
-from src.utils.main_utils import read_yaml_file
+from src.utils.main_utils import read_yaml_file, save_object
 from src.constants import SCHEMA_FILE_PATH
 from src.utils.woe_encoder import WoEEncoder
 
@@ -107,6 +107,9 @@ class DataTransformation:
             os.makedirs(os.path.dirname(self.data_transformation_config.transformed_object_file_path), exist_ok=True)
             with open(self.data_transformation_config.transformed_object_file_path, "wb") as file_obj:
                 pickle.dump(preprocessor, file_obj)
+
+            os.makedirs("final_model", exist_ok=True)
+            save_object("final_model/preprocessor.pkl", preprocessor)
 
             logging.info("Data Transformation completed successfully.")
 
