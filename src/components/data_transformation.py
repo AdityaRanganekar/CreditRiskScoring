@@ -61,6 +61,21 @@ class DataTransformation:
             train_df = pd.read_csv(self.data_validation_artifact.valid_train_file_path)
             test_df = pd.read_csv(self.data_validation_artifact.valid_test_file_path)
 
+            # 2. Load schema and enforce strict column filtering
+            schema = read_yaml_file(SCHEMA_FILE_PATH)
+            
+            if isinstance(schema['columns'], dict):
+                required_columns = list(schema['columns'].keys())
+            else:
+                # Extracts the key from each dictionary in the list
+                required_columns = [list(col.keys())[0] for col in schema['columns']]
+            
+            logging.info(f"Filtering dataset from {train_df.shape[1]} columns down to {len(required_columns)} schema columns.")
+            
+            logging.info(f"Filtering dataset from {train_df.shape[1]} columns down to {len(required_columns)} schema columns.")
+            train_df = train_df[required_columns]
+            test_df = test_df[required_columns]
+
             # Isolate target column
             target_column_name = self._schema_config["target_column"][0]
             

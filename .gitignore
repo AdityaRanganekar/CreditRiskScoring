@@ -7,3 +7,4 @@ credit_data/
 __pycache__
 .env
 *.ipynb_checkpoints/
+catboost_info/
