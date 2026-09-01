@@ -16,3 +16,4 @@ uvicorn
 pyyaml
 python-dotenv
 pymongo
+python-multipart
