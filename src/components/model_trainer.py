@@ -29,9 +29,10 @@ class ModelTrainer:
             raise CreditRiskException(e, sys)
 
     def track_mlflow(self, best_model, train_metric, test_metric):
+        dagshub.init(repo_owner='AdityaRanganekar', repo_name='CreditRiskScoring', mlflow=True)
         with mlflow.start_run():
             mlflow.log_params(best_model.get_params())
-            
+
             mlflow.log_metric("train_f1_score", train_metric.f1_score)
             mlflow.log_metric("train_precision", train_metric.precision_score)
             mlflow.log_metric("train_recall", train_metric.recall_score)
