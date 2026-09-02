@@ -30,7 +30,8 @@ class ModelTrainer:
 
     def track_mlflow(self, best_model, train_metric, test_metric):
         with mlflow.start_run():
-
+            mlflow.log_params(best_model.get_params())
+            
             mlflow.log_metric("train_f1_score", train_metric.f1_score)
             mlflow.log_metric("train_precision", train_metric.precision_score)
             mlflow.log_metric("train_recall", train_metric.recall_score)
@@ -38,10 +39,11 @@ class ModelTrainer:
             mlflow.log_metric("test_f1_score", test_metric.f1_score)
             mlflow.log_metric("test_precision", test_metric.precision_score)
             mlflow.log_metric("test_recall", test_metric.recall_score)
-
+            
             mlflow.sklearn.log_model(
                 sk_model=best_model, 
-                artifact_path="model"
+                name = "model",
+                skops_trusted_types=["xgboost.core.Booster", "xgboost.sklearn.XGBClassifier"]
             )
 
     def evaluate_models(self, X_train, y_train, X_test, y_test, models, params):
@@ -53,7 +55,7 @@ class ModelTrainer:
                 param = params[model_name]
 
                 # GridSearchCV safely handles multiprocessing across your CPU cores
-                gs = GridSearchCV(model, param, cv=3, n_jobs=-1, scoring='f1')
+                gs = GridSearchCV(model, param, cv=3, scoring='f1')
                 gs.fit(X_train, y_train)
 
                 # Train the optimal configuration
@@ -78,26 +80,21 @@ class ModelTrainer:
             }
 
             params = {
-                "Logistic Regression": {
-                    'C': [0.1, 1.0, 5.0]
-                },
-                "Random Forest": {
-                    'n_estimators': [300, 500],
-                    'max_depth': [10, 15],
-                    'min_samples_split': [10, 20],
-                    'min_samples_leaf': [4, 8],
-                    'max_features': ['sqrt', 'log2']
-                },
-                "XGBoost": {
-                    'learning_rate': [0.05, 0.1],
-                    'max_depth': [4, 6],
-                    'n_estimators': [200, 300],
-                    'subsample': [0.8],
-                    'colsample_bytree': [0.8],
-                    'reg_alpha': [0.1, 1.0], 
-                    'reg_lambda': [1.0, 5.0]  
+                    "Logistic Regression": {
+                        'C': [0.1, 1.0],  
+                        'solver': ['lbfgs']
+                    },
+                    "Random Forest": {
+                        'n_estimators': [128],  
+                        'max_depth': [10, 15]
+                    },
+                    "XGBoost": {
+                        'learning_rate': [0.1, 0.05], 
+                        'max_depth': [3, 5, 7],          
+                        'n_estimators': [128, 200],
+                        'subsample': [0.8] 
+                    }
                 }
-            }
 
             model_report = self.evaluate_models(X_train, y_train, X_test, y_test, models, params)
 

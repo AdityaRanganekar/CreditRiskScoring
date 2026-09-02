@@ -1,0 +1,13 @@
+.git/
+.env
+venv/
+__pycache__/
+credit_data/
+raw_data/
+prediction_output/
+notebooks/
+generate_batch_data.py
+push_to_mongodb.py
+test_batch.csv
+log/
+artifacts/

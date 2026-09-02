@@ -29,11 +29,17 @@ class DataValidation:
 
     def validate_number_of_columns(self, dataframe: pd.DataFrame) -> bool:
         try:
-            number_of_columns = len(self._schema_config["columns"])
-            logging.info(f"Required number of columns: {number_of_columns}")
-            logging.info(f"Dataframe has number of columns: {len(dataframe.columns)}")
+            required_columns = [list(col.keys())[0] for col in self._schema_config["columns"]]
 
-            return len(dataframe.columns) == number_of_columns
+            missing_columns = [col for col in required_columns if col not in dataframe.columns]
+
+            if len(missing_columns) > 0:
+                logging.warning(f"Dataframe is missing these required schema columns: {missing_columns}")
+                return False
+            else:
+                logging.info("All required schema columns are present in the dataframe.")
+                return True
+                
         except Exception as e:
             raise CreditRiskException(e, sys)
 
