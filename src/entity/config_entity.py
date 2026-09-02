@@ -5,7 +5,7 @@ from src.constants import *
 
 @dataclass
 class TrainingPipelineConfig:
-    timestamp: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
+    timestamp: str = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     artifact_dir: str = os.path.join(ARTIFACT_DIR, timestamp)
 
 @dataclass
