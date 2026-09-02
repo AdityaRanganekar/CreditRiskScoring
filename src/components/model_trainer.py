@@ -17,8 +17,6 @@ from src.utils.main_utils import load_object, load_numpy_array_data, save_object
 from src.utils.ml_utils.classification_metric import get_classification_score
 from src.utils.ml_utils.estimator import CreditRiskModel
 
-dagshub.init(repo_owner='AdityaRanganekar', repo_name='CreditRiskScoring', mlflow=True)
-
 class ModelTrainer:
     def __init__(self, data_transformation_artifact: DataTransformationArtifact, 
                  model_trainer_config: ModelTrainerConfig):
