@@ -37,6 +37,14 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Download Latest Model from S3
+        run: |
+          mkdir -p final_model
+
+          LATEST_DIR=$(aws s3 ls s3://${{ secrets.S3_BUCKET_NAME }}/final_model/ | sort | tail -n 1 | awk '{print $2}')
+
+          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/final_model/${LATEST_DIR}model.pkl ./final_model/model.pkl
 
       - name: Build, tag, push, and generate Beanstalk config
         env:
