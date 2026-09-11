@@ -108,16 +108,15 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
 @app.post("/predict_json")
 async def predict_json_route(features: CreditFeaturesSchema):
     try:
-        df = pd.DataFrame([features.dict()])
+        df = pd.DataFrame([features.model_dump()])
         
         credit_model = load_object("final_model/model.pkl")
         y_pred = credit_model.predict(df)
-        
-        response = {"predicted_default": int(y_pred[0])}
-        
-        if hasattr(credit_model, "predict_proba"):
-            y_prob = credit_model.predict_proba(df)
-            response["default_probability"] = float(y_prob[0][1])
+
+        response = {
+            "predicted_default": int(y_pred[0]),
+            "default_probability": None
+        }
             
         return JSONResponse(content=response)
         
